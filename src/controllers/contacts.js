@@ -7,8 +7,6 @@ import {
   deleteContactById,
 } from '../services/contacts.js';
 
-import { contactAddSchema } from '../validation/contacts.js';
-
 export const getContactsController = async (req, res) => {
   const data = await getContacts();
   res.json({
@@ -34,15 +32,13 @@ export const getContactsByIdController = async (req, res) => {
 };
 
 export const addContactController = async (req, res) => {
-  const validateResult = contactAddSchema.validate(req.body);
-  console.log(validateResult);
-  /*const data = await addContact(req.body);
+  const data = await addContact(req.body);
 
   res.status(201).json({
     status: 201,
     message: 'Successfully created a contact!',
     data,
-  });*/
+  });
 };
 
 export const patchContactController = async (req, res) => {
