@@ -9,13 +9,37 @@ export const getContacts = async ({
   perPage = 10,
   sortBy,
   sortOrder = sortList[0],
+  filters = {},
 }) => {
   const skip = (page - 1) * perPage;
-  const data = await Contact.find()
+  const contactQuery = Contact.find();
+
+  if (filters.userId) {
+    contactQuery.where('userId').equals(filters.userId);
+  }
+
+  if (filters.type) {
+    contactQuery.where('contactType').equals(filters.type);
+  }
+
+  if (filters.isFavourite !== undefined) {
+    contactQuery.where('isFavourite').equals(filters.isFavourite);
+  }
+
+  const totalItems = await Contact.countDocuments(contactQuery.getFilter());
+
+  const sortParams = {};
+  if (sortBy) {
+    sortParams[sortBy] = sortOrder;
+  }
+  sortParams.contactType = 'asc';
+
+  contactQuery.sort(sortParams);
+
+  const data = await contactQuery
     .skip(skip)
     .limit(perPage)
     .sort({ [sortBy]: sortOrder });
-  const totalItems = await Contact.countDocuments();
 
   const paginationData = calcPaginationData(totalItems, perPage, page);
 
