@@ -32,15 +32,16 @@ export const getContactsController = async (req, res) => {
 
 export const getContactsByIdController = async (req, res) => {
   const { contactId } = req.params;
-  const data = await getContactById(contactId);
+  const { _id: userId } = req.user;
+  const data = await getContactById({ _id: contactId, userId });
 
   if (!data) {
-    throw createHttpError(404, 'Contact not found');
+    throw createHttpError(404, 'Contact not found or does not belong to you');
   }
 
   res.json({
     status: 200,
-    message: 'Successfully found contact with id {contactId}!',
+    message: `Successfully found contact with id ${contactId}!`,
     data,
   });
 };
@@ -58,24 +59,26 @@ export const addContactController = async (req, res) => {
 
 export const patchContactController = async (req, res) => {
   const { contactId } = req.params;
-  const result = await updateContact(contactId, req.body);
+  const { _id: userId } = req.user;
+  const result = await updateContact({ _id: contactId, userId }, req.body);
 
   if (!result) {
-    throw createHttpError(404, 'Contact not found');
+    throw createHttpError(404, 'Contact not found or does not belong to you');
   }
   res.json({
     status: 200,
     message: 'Successfully patched a contact!',
-    data: result.data,
+    data: result,
   });
 };
 
 export const deleteContactController = async (req, res) => {
   const { contactId } = req.params;
-  const data = await deleteContactById(contactId);
+  const { _id: userId } = req.user;
+  const data = await deleteContactById({ _id: contactId, userId });
 
   if (!data) {
-    throw createHttpError(404, 'Contact not found');
+    throw createHttpError(404, 'Contact not found or does not belong to you');
   }
   res.status(204).send();
 };
