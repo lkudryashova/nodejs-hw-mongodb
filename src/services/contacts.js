@@ -49,14 +49,15 @@ export const getContacts = async ({
   };
 };
 
-export const getContactById = (contactId) =>
-  Contact.findOne({ _id: contactId });
+export const getContactById = (contactId, userId) =>
+  Contact.findOne({ _id: contactId, userId });
 
-export const addContact = (payload) => Contact.create(payload);
+export const addContact = (payload, userId) =>
+  Contact.create(...payload, userId);
 
-export const updateContact = async (_id, payload, options = {}) => {
+export const updateContact = async (_id, payload, userId, options = {}) => {
   const { upsert } = options;
-  const rawResult = await Contact.findOneAndUpdate({ _id }, payload, {
+  const rawResult = await Contact.findOneAndUpdate({ _id, userId }, payload, {
     upsert,
     includeResultMetadata: true,
   });
@@ -68,4 +69,5 @@ export const updateContact = async (_id, payload, options = {}) => {
   };
 };
 
-export const deleteContactById = (_id) => Contact.findOneAndDelete({ _id });
+export const deleteContactById = (_id, userId) =>
+  Contact.findOneAndDelete({ _id, userId });
