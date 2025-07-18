@@ -8,6 +8,7 @@ import {
   accessTokenLifeTime,
   refreshTokenLifeTime,
 } from '../constants/auth.js';
+import { sendEmail } from '../utils/send-email.js';
 
 const createSession = () => {
   const accessToken = randomBytes(30).toString('base64');
@@ -82,3 +83,7 @@ export const refreshUser = async ({ refreshToken, sessionId }) => {
 
 export const logoutUser = (sessionId) =>
   SessionCollection.deleteOne({ _id: sessionId });
+
+export const requestResetPasswordEmail = async (email) => {
+  await sendEmail({ email });
+};
