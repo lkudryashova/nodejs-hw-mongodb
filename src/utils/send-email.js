@@ -3,13 +3,6 @@ import { getEnvVar } from './getEnvVar.js';
 import { ENV_VARS } from '../constants/envVars.js';
 import createHttpError from 'http-errors';
 
-console.log('SMTP CONFIG:', {
-  host: getEnvVar(ENV_VARS.SMTP_HOST),
-  port: getEnvVar(ENV_VARS.SMTP_PORT),
-  user: getEnvVar(ENV_VARS.SMTP_USER),
-  pass: getEnvVar(ENV_VARS.SMTP_PASSWORD).slice(0, 5) + '...', // не показуй весь ключ
-});
-
 const mailClient = nodemailer.createTransport({
   host: getEnvVar(ENV_VARS.SMTP_HOST),
   port: Number(getEnvVar(ENV_VARS.SMTP_PORT)),
