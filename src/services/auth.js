@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt';
 import createHttpError from 'http-errors';
 import { randomBytes } from 'node:crypto';
-
+import Handlebars from 'handlebars';
 import UserCollection from '../db/models/User.js';
 import SessionCollection from '../db/models/Session.js';
 import {
@@ -9,6 +9,16 @@ import {
   refreshTokenLifeTime,
 } from '../constants/auth.js';
 import { sendEmail } from '../utils/send-email.js';
+import jwt from 'jsonwebtoken';
+import { getEnvVar } from '../utils/getEnvVar.js';
+import { ENV_VARS } from '../constants/envVars.js';
+import fs from 'node:fs';
+import path from 'node:path';
+import { TEMPLATE_DIR } from '../constants/paths.js';
+
+const resetPasswordTemplate = fs
+  .readFileSync(path.join(TEMPLATE_DIR, 'reset-password-email-template.html'))
+  .toString();
 
 const createSession = () => {
   const accessToken = randomBytes(30).toString('base64');
@@ -85,5 +95,55 @@ export const logoutUser = (sessionId) =>
   SessionCollection.deleteOne({ _id: sessionId });
 
 export const requestResetPasswordEmail = async (email) => {
-  await sendEmail({ email });
+  const user = await findUser({ email });
+  if (!user) {
+    throw createHttpError(401, "Can't reset password for this user");
+  }
+
+  const token = jwt.sign(
+    {
+      sub: user._id,
+      email: user.email,
+      role: user.role,
+    },
+    getEnvVar(ENV_VARS.JWT_SECRET),
+    {
+      expiresIn: '5m',
+    },
+  );
+
+  const template = Handlebars.compile(resetPasswordTemplate);
+
+  const html = template({
+    name: user.name,
+    link: `${getEnvVar(
+      ENV_VARS.FRONTEND_DOMAIN,
+    )}/reset-password?token=${token}`,
+  });
+
+  await sendEmail({ email, html, subject: 'Reset your password!' });
+};
+
+export const resetPassword = async ({ token, password }) => {
+  let tokenPayload;
+
+  try {
+    tokenPayload = jwt.verify(token, getEnvVar(ENV_VARS.JWT_SECRET));
+  } catch (err) {
+    console.log(err);
+    throw createHttpError(401, 'Token is expired or invalid.');
+  }
+
+  const user = await UserCollection.findById(tokenPayload.sub);
+
+  if (!user) {
+    throw createHttpError(404, 'User not found!');
+  }
+
+  const hashPassword = await bcrypt.hash(password, 10);
+
+  await UserCollection.findByIdAndUpdate(tokenPayload.sub, {
+    password: hashPassword,
+  });
+  await SessionCollection.findOneAndDelete({ userId: tokenPayload.sub });
 };

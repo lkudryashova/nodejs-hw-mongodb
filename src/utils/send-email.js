@@ -6,25 +6,23 @@ import createHttpError from 'http-errors';
 const mailClient = nodemailer.createTransport({
   host: getEnvVar(ENV_VARS.SMTP_HOST),
   port: Number(getEnvVar(ENV_VARS.SMTP_PORT)),
-  secure: false,
+  secure: true,
   auth: {
     user: getEnvVar(ENV_VARS.SMTP_USER),
     pass: getEnvVar(ENV_VARS.SMTP_PASSWORD),
   },
 });
 
-export const sendEmail = async ({ email }) => {
+export const sendEmail = async ({ email, html, subject }) => {
   try {
     await mailClient.sendMail({
       to: email,
-      subject: 'Reset your password!',
-      html: '<h1>Here is your reset password email!</h1>',
+      html,
+      subject,
       from: getEnvVar(ENV_VARS.SMTP_FROM),
     });
   } catch (err) {
-    // console.error(err);
-    // throw createHttpError(500, 'Failed to send email');
-    console.error('SMTP ERROR:', err);
-    throw createHttpError(500, err.message || 'Failed to send email');
+    console.error(err);
+    throw createHttpError(500, 'Failed to send email');
   }
 };
