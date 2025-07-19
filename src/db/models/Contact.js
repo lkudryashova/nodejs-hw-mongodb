@@ -1,6 +1,9 @@
 import { Schema, model } from 'mongoose';
 import { typeList } from '../../constants/contacts.js';
 import { handleSaveError, setUpdateSettings } from './hooks.js';
+import Joi from 'joi';
+
+const { required, string } = Joi;
 
 const contactSchema = new Schema(
   {
@@ -29,6 +32,10 @@ const contactSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: 'user',
       required: true,
+    },
+    avatarUrl: {
+      type: String,
+      required: false,
     },
   },
   { versionKey: false, timestamps: true },

@@ -19,6 +19,7 @@ import {
 } from '../validation/contacts.js';
 
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
+import { upload } from '../middlewares/upload-files.js';
 
 const contactsRouter = Router();
 
@@ -43,6 +44,12 @@ contactsRouter.patch(
   isValidId,
   validateBody(contactUpdateSchema),
   ctrlWrapper(patchContactController),
+);
+
+contactsRouter.post(
+  '/:contactId/upload-avatar',
+  upload.single('avatarUrl'),
+  patchContactController,
 );
 
 contactsRouter.delete(
