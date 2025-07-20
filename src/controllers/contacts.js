@@ -10,6 +10,7 @@ import {
   addContact,
   updateContact,
   deleteContactById,
+  uploadContactAvatar,
 } from '../services/contacts.js';
 
 export const getContactsController = async (req, res) => {
@@ -81,4 +82,15 @@ export const deleteContactController = async (req, res) => {
     throw createHttpError(404, 'Contact not found or does not belong to you');
   }
   res.status(204).send();
+};
+
+export const uploadContactsAvatarController = async (req, res) => {
+  const { contactId } = req.params;
+
+  const contact = await uploadContactAvatar(contactId, req.file);
+  return res.json({
+    status: 200,
+    message: `Successfully updated contacts avatar with id ${contactId}!`,
+    data: contact,
+  });
 };

@@ -1,8 +1,8 @@
 import Contact from '../db/models/Contact.js';
-
 import { sortList } from '../constants/index.js';
-
 import { calcPaginationData } from '../utils/calcPaginationData.js';
+//import { saveFile } from '../utils/save-file.js';
+import { saveFileToCloudinary } from '../utils/save-file-to-cloudinary.js';
 
 export const getContacts = async ({
   page = 1,
@@ -70,3 +70,18 @@ export const updateContact = async (_id, payload, userId, options = {}) => {
 
 export const deleteContactById = (_id, userId) =>
   Contact.findOneAndDelete({ _id, userId });
+
+export const uploadContactAvatar = async (contactId, file) => {
+  //const url = await saveFile(file);
+
+  const url = await saveFileToCloudinary(file);
+
+  const contact = await Contact.findByIdAndUpdate(
+    contactId,
+    {
+      photo: url,
+    },
+    { new: true },
+  );
+  return contact;
+};

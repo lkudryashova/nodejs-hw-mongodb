@@ -8,6 +8,7 @@ import { errorHandler } from './middlewares/errorHandler.js';
 
 import authRouter from './routers/auth.js';
 import contactsRouter from './routers/contacts.js';
+import { PERMANENT_UPLOAD_DIR } from './constants/paths.js';
 
 export const setupServer = () => {
   const app = express();
@@ -16,6 +17,8 @@ export const setupServer = () => {
   app.use(cookieParser());
   app.use(express.json());
   app.use(logger);
+
+  app.use('/uploads', express.static(PERMANENT_UPLOAD_DIR));
 
   app.use('/auth', authRouter);
   app.use('/contacts', contactsRouter);

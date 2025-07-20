@@ -6,6 +6,7 @@ import {
   addContactController,
   patchContactController,
   deleteContactController,
+  uploadContactsAvatarController,
 } from '../controllers/contacts.js';
 
 import { isValidId } from '../middlewares/isValidId.js';
@@ -49,7 +50,7 @@ contactsRouter.patch(
 contactsRouter.post(
   '/:contactId/upload-avatar',
   upload.single('avatarUrl'),
-  patchContactController,
+  uploadContactsAvatarController,
 );
 
 contactsRouter.delete(
