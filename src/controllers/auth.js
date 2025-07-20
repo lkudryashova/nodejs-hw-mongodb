@@ -6,6 +6,7 @@ import {
   requestResetPasswordEmail,
   resetPassword,
 } from '../services/auth.js';
+import { getGoogleOAuthUrl } from '../utils/google-oauth-client.js';
 
 const setupSession = (res, session) => {
   res.cookie('refreshToken', session.refreshToken, {
@@ -87,3 +88,19 @@ export const resetPasswordController = async (req, res) => {
     data: {},
   });
 };
+
+/*--------------------------------------------------------*/
+
+export const getGoogleOauthUrlController = (req, res) => {
+  const url = getGoogleOAuthUrl();
+
+  res.json({
+    status: 200,
+    message: 'Successfully obtained google auth url!',
+    data: {
+      url,
+    },
+  });
+};
+
+/*-------------------------------------------------------*/
