@@ -103,4 +103,16 @@ export const getGoogleOauthUrlController = (req, res) => {
   });
 };
 
+export const authorizeWithGoogleController = (req, res) => {
+  const url = getGoogleOAuthUrl();
+
+  res.json({
+    status: 200,
+    message: 'Successfully obtained google auth url!',
+    data: {
+      url,
+    },
+  });
+};
+
 /*-------------------------------------------------------*/

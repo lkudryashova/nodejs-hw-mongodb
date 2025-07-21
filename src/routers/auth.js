@@ -12,6 +12,7 @@ import {
   requestResetPasswordEmailController,
   resetPasswordController,
   getGoogleOauthUrlController,
+  authorizeWithGoogleController,
 } from '../controllers/auth.js';
 import { requestResetPasswordEmailValidationSchema } from '../validation/request-reset-password-email-validation-schema.js';
 import { resetPasswordValidationSchema } from '../validation/reset-password-validation-schema.js';
@@ -48,7 +49,7 @@ authRouter.post(
 /*----------------------------------------------------------------*/
 
 authRouter.post('/get-google-oauth-link', getGoogleOauthUrlController);
-/*authRouter.post('/authorize-with-google-oauth');*/
+authRouter.post('/authorize-with-google-oauth', authorizeWithGoogleController);
 
 /*---------------------------------------------------------------*/
 

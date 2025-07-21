@@ -1,0 +1,45 @@
+tags:
+  - Auth
+summary: Reset email
+operationId: requestResetEmail
+description: 'Send a reset password link to the specified email address.'
+security:
+  - bearerAuth: []
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        required:
+          - email
+        properties:
+          email:
+            type: string
+            description: 'Email address of the user requesting the password reset.'
+            example: 'mmustermann@gmail.com'
+responses:
+  '200':
+    description: 'Reset password email has been successfully sent.'
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - message
+            - status
+            - data
+          properties:
+            message:
+              type: string
+              example: 'Reset password email was successfully sent!'
+            status:
+              type: integer
+              example: 200
+            data:
+              type: object
+              description: 'Additional data, if needed'
+  '401':
+    $ref: '../../../components/responses/401.yaml'
+  '404':
+    $ref: '../../../components/responses/404.yaml'

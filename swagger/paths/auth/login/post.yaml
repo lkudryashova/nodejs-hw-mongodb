@@ -1,0 +1,52 @@
+tags:
+  - Auth
+summary: Login user
+operationId: loginUser
+description: 'Login user to get an access token'
+security:
+  - bearerAuth: []
+requestBody:
+  content:
+    application/json:
+      schema:
+        type: object
+        required:
+          - email
+          - password
+        properties:
+          email:
+            description: "User's email address"
+            type: string
+            example: 'mmustermann@gmail.com'
+          password:
+            description: 'User password '
+            type: string
+            example: '123456'
+responses:
+  '200':
+    description: 'Successfully logged in the user and issued an access token'
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+            - message
+            - data
+          properties:
+            status:
+              type: integer
+              example: 200
+            message:
+              type: string
+              example: 'Successfully logged in the user!'
+            data:
+              type: object
+              properties:
+                accessToken:
+                  type: string
+                  example: 'eK5hVWIEdcTAuAYUDVKnxIXxTYZ/BpARoH75kSF1'
+  '401':
+    $ref: '../../../components/responses/401.yaml'
+  '404':
+    $ref: '../../../components/responses/404.yaml'
