@@ -36,12 +36,14 @@ contactsRouter.get(
 
 contactsRouter.post(
   '/',
+  upload.single('photo'), // update
   validateBody(contactAddSchema),
   ctrlWrapper(addContactController),
 );
 
 contactsRouter.patch(
   '/:contactId',
+  upload.single('photo'), // update
   isValidId,
   validateBody(contactUpdateSchema),
   ctrlWrapper(patchContactController),
